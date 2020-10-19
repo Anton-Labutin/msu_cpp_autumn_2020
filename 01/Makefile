@@ -1,10 +1,13 @@
 CC=g++
 FLAGS=-std=c++17
 
-all: test
+all: main
 
-test: tests.o test_runner.o my_allocator.o main.o
+main: tests.o test_runner.o my_allocator.o main.o
 	$(CC) $(FLAGS) -o my_allocator tests.o test_runner.o my_allocator.o main.o
+    
+test: my_allocator
+	./my_allocator
 
 tests.o: ./Tests/tests.cpp
 	$(CC) $(FLAGS) -c ./Tests/tests.cpp
