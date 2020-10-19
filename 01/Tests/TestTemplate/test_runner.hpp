@@ -15,7 +15,6 @@
 #include <string>
 
 
-
 class TestRunner {
 public:
     template <class TestFunc>
