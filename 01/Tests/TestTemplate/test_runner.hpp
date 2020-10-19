@@ -28,6 +28,9 @@ private:
 };
 
 
+void
+Assert(bool, const std::string&);
+
 
 template <class TestFunc>
 void

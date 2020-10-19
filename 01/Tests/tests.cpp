@@ -61,7 +61,7 @@ TestAlloc()
     {
         Allocator al5;
         al5.MakeAllocator(2000);
-        AssertEqual(al5.Alloc(3000), nullptr, "al5 has not enough memory");
+        Assert(! al5.Alloc(3000), "al5 has not enough memory");
     }
 }
 
