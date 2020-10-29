@@ -321,8 +321,8 @@ TestCallbacks()
         std::string text = "";
         TokenParser tp(text, oss);
 
-        tp.SetStartCallback(std::function(StartCallback));
-        tp.SetEndCallback(std::function(EndCallback));
+        tp.SetStartCallback(std::function<void (std::ostream&)>(StartCallback));
+        tp.SetEndCallback(std::function<void (std::ostream&)>(EndCallback));
 
         tp.ParseText();
 
@@ -333,10 +333,10 @@ TestCallbacks()
         std::string text = "123 abc";
         TokenParser tp(text, oss);
 
-        tp.SetStartCallback(std::function(StartCallback));
-        tp.SetEndCallback(std::function(EndCallback));
-    	tp.SetNumCallback(std::function(NumCallback));
-        tp.SetStrCallback(std::function(StrCallback));
+        tp.SetStartCallback(std::function<void (std::ostream&)>(StartCallback));
+        tp.SetEndCallback(std::function<void (std::ostream&)>(EndCallback));
+    	tp.SetNumCallback(std::function<void (int64_t, std::ostream&)>(NumCallback));
+        tp.SetStrCallback(std::function<void (const std::string&, std::ostream&)>(StrCallback));
 
         tp.ParseText();
 

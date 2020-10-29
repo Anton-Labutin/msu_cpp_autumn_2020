@@ -58,105 +58,103 @@ TokenParser::SetStrCallback(const std::function<void (const std::string &, std::
     foundStrFunc = strCallback;
 }
 
+
+
+size_t
+TokenParser::ParseNumber(size_t startIdx)
+{
+    size_t endIdx = text.find_first_not_of(digits, startIdx);
+    if ( endIdx == std::string::npos || spaces.find_first_of(text[endIdx]) != std::string::npos) {
+        return endIdx;
+    }
+
+    return startIdx;
+}
+
+
+
+size_t
+TokenParser::ParseString(size_t startIdx)
+{
+    size_t endIdx = text.find_first_of(spaces, startIdx);
+    if ( endIdx == std::string::npos || spaces.find_first_of(text[endIdx]) != std::string::npos) {
+        return endIdx;
+    }
+
+    return startIdx;
+}
+
+
+
+void
+TokenParser::AddNumber(TokenTypes& tokens, size_t numStartIdx, size_t numEndIdx)
+{
+    if (numEndIdx != std::string::npos) {
+        tokens.push_back( std::pair<std::string, char>
+                         (text.substr(numStartIdx, numEndIdx - numStartIdx), 'n')
+                         );
+        foundNumFunc(strtoul(text.substr(numStartIdx, numEndIdx - numStartIdx).c_str(), nullptr, 10), output);
+    } else {
+        tokens.push_back( std::pair<std::string, char>
+                         (text.substr(numStartIdx), 'n')
+                         );
+        foundNumFunc(strtoul(text.substr(numStartIdx).c_str(), nullptr, 10), output);
+    }
+}
+
+
+
+void
+TokenParser::AddString(TokenTypes& tokens, size_t strStartIdx, size_t strEndIdx)
+{
+    if (strEndIdx != std::string::npos) {
+        tokens.push_back( std::pair<std::string, char>
+                         (text.substr(strStartIdx, strEndIdx - strStartIdx), 's')
+                         );
+        foundStrFunc(text.substr(strStartIdx, strEndIdx - strStartIdx), output);
+    } else {
+        tokens.push_back( std::pair<std::string, char>
+                         (text.substr(strStartIdx), 's')
+                         );
+        foundStrFunc(text.substr(strStartIdx), output);
+    }
+}
+
+
 TokenTypes
 TokenParser::ParseText()
 {
     startParsingFunc(output);
 
     TokenTypes tokens;
-    const std::string digits("0123456789");
-    const std::string spaces(" \t\n");
 
     size_t textIdx = 0;
     size_t numIdx = 0;
     size_t strIdx = 0;
-    size_t spaceIdx = 0;
 
-    while (textIdx < text.length()) {
-        numIdx = text.find_first_of(digits, textIdx);
-        strIdx = text.find_first_not_of(digits + spaces, textIdx);
+    bool isString = true;
 
-        if (numIdx != std::string::npos && strIdx != std::string::npos) {
-            if (numIdx < strIdx) { // number is maybe before string
-                strIdx = text.find_first_not_of(digits, numIdx);
-                if (spaces.find_first_of(text[strIdx]) != std::string::npos) { // no not digits
-                    tokens.push_back( std::pair<std::string, char>
-                        (text.substr(numIdx, strIdx - numIdx), 'n')
-                    );
-                    foundNumFunc(strtoul(text.substr(numIdx, strIdx - numIdx).c_str(), nullptr, 10), output);
-                    textIdx = strIdx;
-                } else {
-                    spaceIdx = text.find_first_of(spaces, strIdx); // end of the string
-                    if (spaceIdx != std::string::npos) {
-                        tokens.push_back( std::pair<std::string, char>
-                            (text.substr(numIdx, spaceIdx - numIdx), 's')
-                        );
-                        foundStrFunc(text.substr(numIdx, spaceIdx - numIdx), output);
-                        textIdx = spaceIdx;
-                    } else { // last string in text
-                        tokens.push_back( std::pair<std::string, char>
-                            (text.substr(numIdx), 's')
-                        );
-                        foundStrFunc(text.substr(numIdx), output);
-                        textIdx = text.length();
-                    }
-                }
-            } else { // string is maybe before number
-                spaceIdx = text.find_first_of(spaces, strIdx);
-                if (spaceIdx != std::string::npos) {
-                    tokens.push_back( std::pair<std::string, char>
-                        (text.substr(strIdx, spaceIdx - strIdx), 's')
-                    );
-                    foundStrFunc(text.substr(strIdx, spaceIdx - strIdx), output);
-                    textIdx = spaceIdx;
-                } else {
-                    tokens.push_back( std::pair<std::string, char>
-                        (text.substr(strIdx), 's')
-                    );
-                    foundStrFunc(text.substr(strIdx), output);
-                    textIdx = text.length();
-                }
-            }
-        } else { // left either numbers or strings
-            if (numIdx == std::string::npos && strIdx == std::string::npos) {
-                break;
+    size_t charIdx = 0;
+    while (textIdx != std::string::npos && textIdx < text.length()) {
+        charIdx = text.find_first_not_of(spaces, textIdx);
+        if (charIdx != std::string::npos) {
+            if (digits.find_first_of(text[charIdx]) != std::string::npos) {
+                textIdx = ParseNumber(charIdx);
+                if (textIdx != charIdx) {
+                    // number parsed
+                    isString = false;
+                    AddNumber(tokens, charIdx, textIdx);
+                } // else it is a string with digits
             }
 
-            if (numIdx == std::string::npos) { // left only strings
-                spaceIdx = text.find_first_of(spaces, strIdx);
-                if (spaceIdx != std::string::npos) { // not last string
-                    tokens.push_back( std::pair<std::string, char>
-                        (text.substr(strIdx, spaceIdx - strIdx), 's')
-                    );
-                    foundStrFunc(text.substr(strIdx, spaceIdx - strIdx), output);
-                    textIdx = spaceIdx;
-                } else { // the last string
-                    if (strIdx != std::string::npos) {
-                        tokens.push_back( std::pair<std::string, char>
-                            (text.substr(strIdx), 's')
-                        );
-                        foundStrFunc(text.substr(strIdx), output);
-                        textIdx = text.length();
-                    }
-                }
-            } else { // left only numbers
-                spaceIdx = text.find_first_of(spaces, numIdx);
-                if (spaceIdx != std::string::npos) { // not last
-                    tokens.push_back( std::pair<std::string, char>
-                        (text.substr(numIdx, spaceIdx - numIdx), 'n')
-                    );
-                    foundNumFunc(strtoul(text.substr(numIdx, spaceIdx - numIdx).c_str(), nullptr, 10), output);
-                    textIdx = spaceIdx;
-                } else { // last num
-                    // if (numIdx != std::string::npos) {
-                        tokens.push_back( std::pair<std::string, char>
-                            (text.substr(numIdx), 'n')
-                        );
-                        foundNumFunc(strtoul(text.substr(numIdx).c_str(), nullptr, 10), output);
-                    	textIdx = text.length();
-                    // }
-                }
+            if (isString) {
+                textIdx = ParseString(charIdx);
+                AddString(tokens, charIdx, textIdx);
             }
+
+            isString = true;
+        } else {
+            textIdx = charIdx;
         }
     }
 

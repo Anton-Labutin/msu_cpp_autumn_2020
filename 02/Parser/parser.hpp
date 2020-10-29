@@ -20,6 +20,9 @@ typedef std::vector< std::pair< std::string, char > >  TokenTypes;
 class TokenParser {
     std::string text;
 
+    const std::string digits = "0123456789";
+    const std::string spaces = " \t\n";
+
     std::function<void (std::ostream& out)> startParsingFunc = startParsingStandardFunc;
     std::function<void (std::ostream& out)> endParsingFunc = endParsingStandardFunc;
 
@@ -39,6 +42,18 @@ class TokenParser {
     foundStrStandardFunc(const std::string& str, std::ostream& out = std::cout);
 
     std::ostream& output = std::cout;
+
+    size_t
+    ParseNumber(size_t);
+
+    size_t
+    ParseString(size_t);
+
+    void
+    AddNumber(TokenTypes& tokens, size_t numStartIdx, size_t numEndIdx);
+
+    void
+    AddString(TokenTypes& tokens, size_t strStartIdx, size_t strEndIdx);
 
 public:
     TokenParser(std::string& txt, std::ostream& out = std::cout)

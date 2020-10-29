@@ -22,4 +22,4 @@ main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 clean: 
-	rm -rf *.o my_parser
+	rm -rf *.o
