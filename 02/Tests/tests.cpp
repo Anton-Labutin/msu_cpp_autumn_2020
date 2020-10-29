@@ -25,7 +25,7 @@ AssertTokensParsed(const TokenTypes& tokens1,
 void
 TestParseEmptyText()
 {
-     TokenTypes tokensParsed;
+    TokenTypes tokensParsed;
     TokenTypes correctTokens;
     {
         std::string emptyText = "";
@@ -249,15 +249,6 @@ TestParseComplexText()
 
         correctTokens = { {"def", 's'}, {"456", 'n'} };
         AssertTokensParsed(tokensParsed, correctTokens, "    def        456        ");
-        correctTokens.clear();
-    }
-    {
-        std::string text = "1 a 2 b 3 c";
-        TokenParser tp(text);
-        tokensParsed = tp.ParseText();
-
-        correctTokens = { {"1", 'n'}, {"a", 's'}, {"2", 'n'}, {"b", 's'}, {"3", 'n'}, {"c", 's'} };
-        AssertTokensParsed(tokensParsed, correctTokens, "1 a 2 b 3 c");
         correctTokens.clear();
     }
     {
