@@ -25,7 +25,7 @@ class Matrix {
     public:
         Proxy(int *matrixRow_, size_t columnCnt_);
         
-		int&
+        int&
         operator [] (size_t clmIdx) noexcept(false);
 
         int
@@ -40,7 +40,7 @@ class Matrix {
 public:
     Matrix(size_t rowCnt_ = 0, size_t clmCnt_ = 0);
 
-	Matrix&
+    Matrix&
     operator *= (int num);
 
     Matrix
@@ -55,10 +55,10 @@ public:
     Proxy
     operator [] (size_t rowIdx) noexcept(false);
 
-	Proxy
+    Proxy
     operator [] (size_t rowIdx) const noexcept(false);
 
-	int&
+    int&
     Get(size_t rowIdx, size_t clmIdx) noexcept(false);
 
     int

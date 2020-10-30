@@ -18,7 +18,7 @@ Matrix::Matrix(size_t rowCnt_, size_t clmCnt_)
 
 
 Matrix::Proxy::Proxy(int *matrixRow_, size_t columnCnt_)
-	: matrixRow(matrixRow_), columnCnt(columnCnt_)
+    : matrixRow(matrixRow_), columnCnt(columnCnt_)
 {}
 
 int&
