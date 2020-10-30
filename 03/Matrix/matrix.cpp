@@ -36,8 +36,40 @@ Matrix::Proxy::operator[](size_t clmIdx)
 }
 
 
+
+int
+Matrix::Proxy::operator[](size_t clmIdx) const
+{
+    if (matrixRow == nullptr) {
+        throw std::logic_error("matrixRow is null");
+    }
+
+    if (clmIdx >= columnCnt) {
+        throw std::out_of_range("Column index is out of range");
+    }
+
+    return matrixRow[clmIdx];
+}
+
+
 Matrix::Proxy
 Matrix::operator [] (size_t rowIdx)
+{
+    if (GetMatrix() == nullptr) {
+        throw std::logic_error("Matrix is empty");
+    }
+
+    if (rowIdx >= GetRowCnt()) {
+        throw std::out_of_range("Row index is out of range");
+    }
+
+    return Proxy((GetMatrix())[rowIdx], GetColumnCnt());
+}
+
+
+
+Matrix::Proxy
+Matrix::operator [] (size_t rowIdx) const
 {
     if (GetMatrix() == nullptr) {
         throw std::logic_error("Matrix is empty");
@@ -66,7 +98,7 @@ Matrix::operator *= (int num)
 
 
 Matrix
-Matrix::operator + (const Matrix& m)
+Matrix::operator + (const Matrix& m) const
 {
     if (GetRowCnt() != m.GetRowCnt() || GetColumnCnt() != m.GetColumnCnt()) {
         throw std::invalid_argument("Incorrect matrix size");
@@ -183,7 +215,7 @@ Matrix::~Matrix()
 
 
 std::ostream&
-operator + (std::ostream& output, const Matrix& m)
+operator << (std::ostream& output, const Matrix& m)
 {
     for (size_t rowIdx = 0; rowIdx < m.GetRowCnt(); ++rowIdx) {
         for (size_t clmIdx = 0; clmIdx < m.GetColumnCnt(); ++clmIdx) {

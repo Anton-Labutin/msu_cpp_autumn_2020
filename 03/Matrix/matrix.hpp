@@ -27,6 +27,9 @@ class Matrix {
         
 		int&
         operator [] (size_t clmIdx) noexcept(false);
+
+        int
+        operator [] (size_t clmIdx) const noexcept(false);
     };
 
     int**
@@ -41,7 +44,7 @@ public:
     operator *= (int num);
 
     Matrix
-    operator + (const Matrix& m) noexcept(false);
+    operator + (const Matrix& m) const noexcept(false);
 
     bool
     operator == (const Matrix& matr) const noexcept(false);
@@ -51,6 +54,9 @@ public:
 
     Proxy
     operator [] (size_t rowIdx) noexcept(false);
+
+	Proxy
+    operator [] (size_t rowIdx) const noexcept(false);
 
 	int&
     Get(size_t rowIdx, size_t clmIdx) noexcept(false);
@@ -68,6 +74,6 @@ public:
 };
 
 std::ostream&
-operator + (std::ostream& output, const Matrix& m);
+operator << (std::ostream& output, const Matrix& m);
 
 #endif /* matrix_hpp */

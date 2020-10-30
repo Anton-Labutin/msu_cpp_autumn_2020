@@ -184,7 +184,7 @@ TestMatrixOperatorNotEqual()
         m3[1][1] = m4[1][1] = 4;
 
         Assert(!(m3 != m4), "m3 = m4");
-	}
+    }
 }
 
 
